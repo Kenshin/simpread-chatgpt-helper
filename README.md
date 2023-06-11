@@ -6,7 +6,7 @@
 
 ![](https://github.com/Kenshin/simpread/assets/81074/04f647ba-bd67-471c-84ad-ad71929b8e19)
 
-![](https://github.com/Kenshin/simpread/assets/81074/91332550-efe7-4c8d-8cd2-f0a531c806b2)
+![](https://github.com/Kenshin/simpread/assets/81074/2505c50d-4c04-4c62-96a5-979464846579)
 
 # 如何安装
 
@@ -14,7 +14,7 @@
 
 ## 下载
 
-进入 https://github.com/Kenshin/simpread-chatgpt-helper 右上角 → Code → Download ZIP
+进入 https://github.com/Kenshin/simpread-chatgpt-helper 右上角 → **Code** → **Download ZIP** 然后解压缩到本地。
 
 <details>
   <img src="https://github.com/Kenshin/simpread/assets/81074/3d11bb66-82b5-4242-8d6b-be519891bd04">
