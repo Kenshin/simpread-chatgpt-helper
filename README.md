@@ -4,7 +4,7 @@
 
 # 演示
 
-<video src="https://github-production-user-asset-6210df.s3.amazonaws.com/81074/244921619-091f46e5-a7c1-4a47-8519-ee9abc354096.mp4"></video>
+![](https://github.com/Kenshin/simpread/assets/81074/04f647ba-bd67-471c-84ad-ad71929b8e19)
 
 ![](https://github.com/Kenshin/simpread/assets/81074/91332550-efe7-4c8d-8cd2-f0a531c806b2)
 
