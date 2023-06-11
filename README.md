@@ -6,7 +6,9 @@
 
 ![](https://github.com/Kenshin/simpread/assets/81074/04f647ba-bd67-471c-84ad-ad71929b8e19)
 
-![](https://github.com/Kenshin/simpread/assets/81074/2505c50d-4c04-4c62-96a5-979464846579)
+<details><summary>更多截图</summary>
+  <img src="https://github.com/Kenshin/simpread/assets/81074/2505c50d-4c04-4c62-96a5-979464846579"/>
+</details>
 
 # 如何安装
 
@@ -38,7 +40,7 @@
 
 # 如何使用
 
-因为无法独立使用，属于简悦项目的辅助性工具，目前接入了两个简悦插件：
+因为无法独立使用，目前接入了两个简悦插件：
 
 ## 划词翻译
 
