@@ -74,7 +74,7 @@
 
 # 常见问题
 
-1. 因为调用的是 ChatGPT Web 端的数据，所以需要实现登录你的 ChatGPT 账户。
+1. 因为调用的是 ChatGPT Web 端的数据，所以需要事先登录你的 ChatGPT 账户。
 
 2. 建议如果是 ChatGPT Plus 账户的用户可使用此方式。
 
