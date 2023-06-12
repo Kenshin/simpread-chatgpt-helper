@@ -23,15 +23,25 @@ class ChatGPT {
         });
     }
 
+    promots( word, paragraph = false ) {
+        return [{
+            id: this.UUID, 
+            role: 'user',
+            content: { 
+                'content_type': 'text',
+                parts: [ / /ig.test( word ) || paragraph
+                    ? `You are a professional translation engine, please translate the text into a colloquial, professional, elegant and fluent content, without the style of machine translation.  You must only translate the text content, never interpret it.\n\nTranslate from English to 简体中文. Return translated text only. Only translate the text between [[ and ]].:\n[[${ word }]]`
+                    : '你是一个翻译引擎，请翻译给出的文本，只需要翻译不需要解释。当且仅当文本只有一个单词时，请给出单词原始形态（如果有）、单词的语种、对应的音标或转写、所有含义（含词性）、双语示例，至少三条例句。如果你认为单词拼写错误，请提示我最可能的正确拼写，否则请严格按照下面格式给到翻译结果：\n    <单词>\n    [<语种>]· / <Pinyin>\n    [<词性缩写>] <中文含义>]\n    例句：\n    <序号><例句>(例句翻译)\n    词源：\n    <词源>\n\n好的，我明白了，请给我这个单词。:\n单词是：' + word
+                ]}
+        }];
+    }
+
     async translation( mode, word ) {
         return new Promise(( resolve, reject ) => {
-            const body = { action: 'next', messages: [{ id: this.UUID, role: 'user',
-                    content: { 'content_type': 'text', parts: [ / /ig.test( word )
-                        ? `You are a professional translation engine, please translate the text into a colloquial, professional, elegant and fluent content, without the style of machine translation.  You must only translate the text content, never interpret it.\n\nTranslate from English to 简体中文. Return translated text only. Only translate the text between [[ and ]].:\n[[${ word }]]`
-                        : '你是一个翻译引擎，请翻译给出的文本，只需要翻译不需要解释。当且仅当文本只有一个单词时，请给出单词原始形态（如果有）、单词的语种、对应的音标或转写、所有含义（含词性）、双语示例，至少三条例句。如果你认为单词拼写错误，请提示我最可能的正确拼写，否则请严格按照下面格式给到翻译结果：\n    <单词>\n    [<语种>]· / <Pinyin>\n    [<词性缩写>] <中文含义>]\n    例句：\n    <序号><例句>(例句翻译)\n    词源：\n    <词源>\n\n好的，我明白了，请给我这个单词。:\n单词是：' + word
-                    ]}
-                }],
-                model: mode, parent_message_id: this.UUID
+            const body = { 
+                action: 'next', 
+                messages: this.promots( word ),
+                model: mode, parent_message_id: this.UUID, stream: true,
             };
             const settings = {
                 url: 'https://chat.openai.com/backend-api/conversation',
@@ -69,15 +79,12 @@ class ChatGPT {
         });
     }
 
-    async sse( mode, word, callback ) {
+    async sse( mode, word, callback, paragraph ) {
         return new Promise( async ( resolve, reject ) => {
             let i = 0, id = '', str = '';
-            const body = { action: 'next', messages: [{ id: this.UUID, role: 'user',
-                    content: { 'content_type': 'text', parts: [ / /ig.test( word )
-                        ? `You are a professional translation engine, please translate the text into a colloquial, professional, elegant and fluent content, without the style of machine translation.  You must only translate the text content, never interpret it.\n\nTranslate from English to 简体中文. Return translated text only. Only translate the text between [[ and ]].:\n[[${ word }]]`
-                        : '你是一个翻译引擎，请翻译给出的文本，只需要翻译不需要解释。当且仅当文本只有一个单词时，请给出单词原始形态（如果有）、单词的语种、对应的音标或转写、所有含义（含词性）、双语示例，至少三条例句。如果你认为单词拼写错误，请提示我最可能的正确拼写，否则请严格按照下面格式给到翻译结果：\n    <单词>\n    [<语种>]· / <Pinyin>\n    [<词性缩写>] <中文含义>]\n    例句：\n    <序号><例句>(例句翻译)\n    词源：\n    <词源>\n\n好的，我明白了，请给我这个单词。:\n单词是：' + word
-                    ]}
-                }],
+            const body = { 
+                action: 'next', 
+                messages: this.promots( word, paragraph ),
                 model: mode, parent_message_id: this.UUID, stream: true,
             };
             const ctrl = new AbortController();
@@ -133,7 +140,7 @@ let tabs = new Map();
 
 chrome.runtime.onMessageExternal.addListener( async ( request, sender, sendResponse ) => {
     console.log( 'current simpread chatgpt stream:', request, sender, sendResponse )
-    const { type, status, word, mode, uid } = request;
+    const { type, status, word, mode, uid, paragraph, delay } = request;
     if ( type != 'simpread_chatgpt_stream' ) return;
     console.log( 'status: ', status )
     if ( status == 'start' ) {
@@ -150,7 +157,7 @@ chrome.runtime.onMessageExternal.addListener( async ( request, sender, sendRespo
                 sendResponse({ str, status: 'pending' });
                 tab.i++;
             }
-        });
+        }, paragraph );
         tab.is_end  = true;
         await tab.chatgpt.remove( id );
     } else if ( status == 'pending' ) {
@@ -163,7 +170,7 @@ chrome.runtime.onMessageExternal.addListener( async ( request, sender, sendRespo
                 sendResponse({ str: tab.queue[tab.i], status: 'pending' });
                 tab.i++;
             }
-        }, 10 );
+        }, delay || 70 );
     } else if ( status == 'end' ) {
         tabs.delete( uid );
     }

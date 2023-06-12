@@ -1,0 +1,27 @@
+{
+  "manifest_version": 2,
+  "name": "ChatGPT 助手 with 简悦",
+  "version": "1.0",
+  "description"     : "为简悦提供获取 ChatGPT 的能力。",
+  "homepage_url"    : "https://simpread.pro",
+  "author"          : "Kenshin Wang <kenshin@ksria.com>",
+  "icons" : {
+    "128"           : "logo.png"
+  },
+  "background": {
+    "scripts": ["jquery@3.7.0.min.js","background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["contentscript.js"]
+    }
+  ],
+  "externally_connectable": {
+    "ids": [
+      "ijllcpnolfcooahcekpamkbidhejabll"
+    ]
+  },
+  "permissions": ["activeTab"]
+}
