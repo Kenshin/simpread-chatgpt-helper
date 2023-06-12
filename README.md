@@ -6,7 +6,7 @@
 
 ![](https://github.com/Kenshin/simpread/assets/81074/04f647ba-bd67-471c-84ad-ad71929b8e19)
 
-<details><summary>更多截图</summary>
+<details><summary>更多效果</summary>
   <img src="https://github.com/Kenshin/simpread/assets/81074/2505c50d-4c04-4c62-96a5-979464846579"/>
 </details>
 
@@ -57,6 +57,20 @@
 右下角 → 动作 → 插件触发器 → 打开全文翻译的选项页，并按下图所示启用相应功能
 
 ![](https://github.com/Kenshin/simpread/assets/81074/26bd9d90-8d2e-480c-a186-cd0b4bb07767)
+
+## 调整流式的速度
+
+因为调用 ChatGPT API 会受到网络环境等因素影响导致导致回复速度（速率）会有区别，如果你的网络环境速度很快，可以使用以下方案调整相应速率。
+
+除非你觉得速度较慢，否则不建议设置。😄
+
+<details><summary>划词翻译</summary>
+  <img src="https://github.com/Kenshin/simpread/assets/81074/1ad0b1e3-6ca6-4917-a64f-97fe9e910774"/>
+</details>
+
+<details><summary>全文翻译</summary>
+  <img src="https://github.com/Kenshin/simpread/assets/81074/646db0a9-f6b1-4995-91e7-a0e9f62b913a"/>
+</details>
 
 # 常见问题
 
