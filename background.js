@@ -23,16 +23,21 @@ class ChatGPT {
         });
     }
 
-    promots( word, paragraph = false ) {
+    promot( word, paragraph = false ) {
+        if ( /[\u4e00-\u9fa5]/ig.test( word )) {
+            return `你是一个百科大师，我会问你一些问题，请直接帮我解释，注意：不是翻译，而是解释，就像维基百科那样。我的问题是：\n${ word }`;
+        } else if ( / /ig.test( word ) || paragraph ) {
+            return `You are a professional translation engine, please translate the text into a colloquial, professional, elegant and fluent content, without the style of machine translation.  You must only translate the text content, never interpret it.\n\nTranslate from English to 简体中文. Return translated text only. Only translate the text between [[ and ]].:\n[[${ word }]]`;
+        } else {
+            return '你是一个翻译引擎，请翻译给出的文本，只需要翻译不需要解释。当且仅当文本只有一个单词时，请给出单词原始形态（如果有）、单词的语种、对应的音标或转写、所有含义（含词性）、双语示例，至少三条例句。如果你认为单词拼写错误，请提示我最可能的正确拼写，否则请严格按照下面格式给到翻译结果：\n    <单词>\n    [<语种>]· / <Pinyin>\n    [<词性缩写>] <中文含义>]\n    例句：\n    <序号><例句>(例句翻译)\n    词源：\n    <词源>\n\n好的，我明白了，请给我这个单词。:\n单词是：' + word;
+        }
+    }
+
+    messages( word, paragraph = false ) {
         return [{
             id: this.UUID, 
             role: 'user',
-            content: { 
-                'content_type': 'text',
-                parts: [ / /ig.test( word ) || paragraph
-                    ? `You are a professional translation engine, please translate the text into a colloquial, professional, elegant and fluent content, without the style of machine translation.  You must only translate the text content, never interpret it.\n\nTranslate from English to 简体中文. Return translated text only. Only translate the text between [[ and ]].:\n[[${ word }]]`
-                    : '你是一个翻译引擎，请翻译给出的文本，只需要翻译不需要解释。当且仅当文本只有一个单词时，请给出单词原始形态（如果有）、单词的语种、对应的音标或转写、所有含义（含词性）、双语示例，至少三条例句。如果你认为单词拼写错误，请提示我最可能的正确拼写，否则请严格按照下面格式给到翻译结果：\n    <单词>\n    [<语种>]· / <Pinyin>\n    [<词性缩写>] <中文含义>]\n    例句：\n    <序号><例句>(例句翻译)\n    词源：\n    <词源>\n\n好的，我明白了，请给我这个单词。:\n单词是：' + word
-                ]}
+            content: { 'content_type': 'text', parts: [ this.promot( word, paragraph ) ]}
         }];
     }
 
@@ -40,7 +45,7 @@ class ChatGPT {
         return new Promise(( resolve, reject ) => {
             const body = { 
                 action: 'next', 
-                messages: this.promots( word ),
+                messages: this.messages( word ),
                 model: mode, parent_message_id: this.UUID, stream: true,
             };
             const settings = {
@@ -84,7 +89,7 @@ class ChatGPT {
             let i = 0, id = '', str = '';
             const body = { 
                 action: 'next', 
-                messages: this.promots( word, paragraph ),
+                messages: this.messages( word, paragraph ),
                 model: mode, parent_message_id: this.UUID, stream: true,
             };
             const ctrl = new AbortController();
