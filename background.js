@@ -23,7 +23,7 @@ class ChatGPT {
         });
     }
 
-    promot( word, paragraph = false ) {
+    prompts( word, paragraph = false ) {
         if ( /[\u4e00-\u9fa5]/ig.test( word )) {
             return `你是一个百科大师，我会问你一些问题，请直接帮我解释，注意：不是翻译，而是解释，就像维基百科那样。我的问题是：\n${ word }`;
         } else if ( / /ig.test( word ) || paragraph ) {
@@ -37,7 +37,7 @@ class ChatGPT {
         return [{
             id: this.UUID, 
             role: 'user',
-            content: { 'content_type': 'text', parts: [ prompt ? prompt.replace( '{{content}}', word ) : this.promot( word, paragraph ) ]}
+            content: { 'content_type': 'text', parts: [ prompt ? prompt.replace( '{{content}}', word ) : this.prompts( word, paragraph ) ]}
         }];
     }
 
