@@ -33,11 +33,11 @@ class ChatGPT {
         }
     }
 
-    messages( word, paragraph = false ) {
+    messages( word, prompt, paragraph = false ) {
         return [{
             id: this.UUID, 
             role: 'user',
-            content: { 'content_type': 'text', parts: [ this.promot( word, paragraph ) ]}
+            content: { 'content_type': 'text', parts: [ prompt ? prompt.replace( '{{content}}', word ) : this.promot( word, paragraph ) ]}
         }];
     }
 
@@ -84,12 +84,12 @@ class ChatGPT {
         });
     }
 
-    async sse( mode, word, callback, paragraph ) {
+    async sse( mode, word, callback, paragraph, prompt ) {
         return new Promise( async ( resolve, reject ) => {
             let i = 0, id = '', str = '';
             const body = { 
                 action: 'next', 
-                messages: this.messages( word, paragraph ),
+                messages: this.messages( word, prompt, paragraph ),
                 model: mode, parent_message_id: this.UUID, stream: true,
             };
             const ctrl = new AbortController();
@@ -145,7 +145,7 @@ let tabs = new Map();
 
 chrome.runtime.onMessageExternal.addListener( async ( request, sender, sendResponse ) => {
     console.log( 'current simpread chatgpt stream:', request, sender, sendResponse )
-    const { type, status, word, mode, uid, paragraph, delay } = request;
+    const { type, status, word, mode, uid, paragraph, delay, prompt } = request;
     if ( type != 'simpread_chatgpt_stream' ) return;
     console.log( 'status: ', status )
     if ( status == 'start' ) {
@@ -162,7 +162,7 @@ chrome.runtime.onMessageExternal.addListener( async ( request, sender, sendRespo
                 sendResponse({ str, status: 'pending' });
                 tab.i++;
             }
-        }, paragraph );
+        }, paragraph, prompt );
         tab.is_end  = true;
         await tab.chatgpt.remove( id );
     } else if ( status == 'pending' ) {
