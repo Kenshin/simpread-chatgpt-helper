@@ -102,15 +102,17 @@ class ChatGPT {
                 body: JSON.stringify( body ),
                 signal: ctrl.signal,
                 onopen( response ) {
-                    if ( response.status === 200 ) {
-                        return;
+                    if ( response.status !== 200 ) {
+                        reject( `Failed to send message. HTTP ${ response.status } - ${ response.statusText }` );
+                        throw new Error( `Failed to send message. HTTP ${ response.status } - ${ response.statusText }` );
                     }
-                    throw new Error( `Failed to send message. HTTP ${ response.status } - ${ response.statusText }` );
                 },
                 onclose() {
+                    reject( 'Failed to send message. Server closed the connection unexpectedly.' );
                     throw new Error( 'Failed to send message. Server closed the connection unexpectedly.' );
                 },
                 onerror( err ) {
+                    reject( err );
                     throw err;
                 },
                 onmessage( message ) {
@@ -155,16 +157,20 @@ chrome.runtime.onMessageExternal.addListener( async ( request, sender, sendRespo
         console.log( 'token: ', token )
         tab.chatgpt.token   = token;
         tabs.set( uid, tab );
-        const { id, trans } = await tab.chatgpt.sse( mode, word, str => {
-            //console.log( str );
-            tab.queue.push( str );
-            if ( tab.i == 0 ) {
-                sendResponse({ str, status: 'pending' });
-                tab.i++;
-            }
-        }, paragraph, prompt );
-        tab.is_end  = true;
-        await tab.chatgpt.remove( id );
+        try {
+            const { id, trans } = await tab.chatgpt.sse( mode, word, str => {
+                //console.log( str );
+                tab.queue.push( str );
+                if ( tab.i == 0 ) {
+                    sendResponse({ str, status: 'pending' });
+                    tab.i++;
+                }
+            }, paragraph, prompt );
+            tab.is_end  = true;
+            await tab.chatgpt.remove( id );
+        } catch( error ) {
+            sendResponse({ str: error, status: 'error' });
+        }
     } else if ( status == 'pending' ) {
         const tab = tabs.get( uid );
         if ( !tab ) return;
