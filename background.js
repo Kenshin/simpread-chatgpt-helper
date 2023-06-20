@@ -84,9 +84,9 @@ class ChatGPT {
         });
     }
 
-    async sse( mode, word, callback, paragraph, prompt ) {
+    async sse( mode, word, callback, paragraph, prompt, goon ) {
         return new Promise( async ( resolve, reject ) => {
-            let i = 0, id = '', str = '';
+            let i = 0, id = '', str = '', action;
             const body = { 
                 action: 'next', 
                 messages: this.messages( word, prompt, paragraph ),
@@ -99,7 +99,7 @@ class ChatGPT {
                     'Authorization': 'Bearer ' + this.token,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify( body ),
+                body: JSON.stringify( goon || body ),
                 signal: ctrl.signal,
                 onopen( response ) {
                     if ( response.status !== 200 ) {
@@ -119,12 +119,15 @@ class ChatGPT {
                     if ( message.data === '[DONE]' ) {
                         ctrl.abort();
                         console.log( 'DONE' );
-                        resolve({ id, trans: str });
+                        resolve({ id, trans: str, action });
                     }
                     if ( i >= 2 ) {
                         const result = JSON.parse( message.data );
                         id  = result.conversation_id;
                         str = result.message.content.parts[0];
+                        if ( result.message.end_turn == false ) {
+                            action = { id, parent: result.message.id };
+                        }
                         callback && callback( str );
                     }
                     i++;
@@ -146,10 +149,10 @@ class Tab {
 let tabs = new Map();
 
 chrome.runtime.onMessageExternal.addListener( async ( request, sender, sendResponse ) => {
-    console.log( 'current simpread chatgpt stream:', request, sender, sendResponse )
+    //console.log( 'current simpread chatgpt stream:', request, sender, sendResponse )
     const { type, status, word, mode, uid, paragraph, delay, prompt } = request;
     if ( type != 'simpread_chatgpt_stream' ) return;
-    console.log( 'status: ', status )
+    //console.log( 'status: ', status )
     if ( status == 'start' ) {
         const tab       = new Tab();
         tab.chatgpt     = new ChatGPT();
@@ -157,20 +160,36 @@ chrome.runtime.onMessageExternal.addListener( async ( request, sender, sendRespo
         console.log( 'token: ', token )
         tab.chatgpt.token   = token;
         tabs.set( uid, tab );
-        try {
-            const { id, trans } = await tab.chatgpt.sse( mode, word, str => {
-                //console.log( str );
-                tab.queue.push( str );
-                if ( tab.i == 0 ) {
-                    sendResponse({ str, status: 'pending' });
-                    tab.i++;
+        const sse = async ( mode, word , paragraph, prompt, goon, prev = '' ) => {
+            try {
+                const { id, trans, action } = await tab.chatgpt.sse( mode, word, str => {
+                    //console.log( str );
+                    tab.queue.push( prev + str );
+                    if ( tab.i == 0 ) {
+                        sendResponse({ str: prev + str, status: 'pending' });
+                        tab.i++;
+                    }
+                }, paragraph, prompt, goon );
+                if ( action ) {
+                    const goon = {
+                        'action': 'continue',
+                        'conversation_id': action.id,
+                        'parent_message_id': action.parent,
+                        'model': mode,
+                        'timezone_offset_min': -480,
+                        'history_and_training_disabled': false,
+                        'arkose_token': null
+                    };
+                    await sse( mode, word, paragraph, prompt, goon, tab.queue[ tab.queue.length -1 ] );
+                } else {
+                    tab.is_end  = true;
+                    await tab.chatgpt.remove( id );
                 }
-            }, paragraph, prompt );
-            tab.is_end  = true;
-            await tab.chatgpt.remove( id );
-        } catch( error ) {
-            sendResponse({ str: error, status: 'error' });
-        }
+            } catch( error ) {
+                sendResponse({ str: error, status: 'error' });
+            }
+        };
+        await sse( mode, word , paragraph, prompt );
     } else if ( status == 'pending' ) {
         const tab = tabs.get( uid );
         if ( !tab ) return;
