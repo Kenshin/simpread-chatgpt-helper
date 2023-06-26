@@ -40,7 +40,7 @@
 
 # 获取 ID
 
-根据不同的浏览器，复制对应的 `ID`，下面截图所示的值为 `alldlbingjakedcnipocpelmabmdjdbj` 。
+根据不同的浏览器，复制对应的 `ID`，下面截图所示的值为 `alldlbingjakedcnipocpelmabmdjdbj`
 
 请留意：每个用户手动安装后的 `ID` 都不一样。
 
