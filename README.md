@@ -40,6 +40,8 @@
 
 # 获取 ID
 
+根据不同的浏览器，复制对应的 `ID`，请留意：每个用户手动安装后的 `ID` 都不一样。
+
 <details><summary>Chrome</summary>
   进入 <code>chrome://extensions/</code><br>
   <img src="https://github.com/Kenshin/simpread/assets/81074/6e5c4cc5-3aa7-4eb8-a26c-ce8695dbb5bc"/>
@@ -49,8 +51,6 @@
   进入 <code>edge://extensions/</code><br>
   <img src="https://github.com/Kenshin/simpread/assets/81074/762bc1cc-64a2-482e-b12e-e7b96437946b"/>
 </details>
-
-注意：每个用户手动安装后的 `ID` 都不一样。
 
 # 如何使用
 
