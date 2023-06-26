@@ -40,9 +40,9 @@
 
 # 获取 ID
 
-根据不同的浏览器，复制对应的 `ID`，请留意：每个用户手动安装后的 `ID` 都不一样。
+根据不同的浏览器，复制对应的 `ID`，下面所示的值为 `alldlbingjakedcnipocpelmabmdjdbj` 。
 
-下面所示的值为 `alldlbingjakedcnipocpelmabmdjdbj`
+请留意：每个用户手动安装后的 `ID` 都不一样。
 
 <details><summary>Chrome</summary>
   进入 <code>chrome://extensions/</code><br>
