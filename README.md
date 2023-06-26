@@ -38,6 +38,20 @@
   <img src="https://github.com/Kenshin/simpread/assets/81074/82939d47-e442-477d-98ed-1a74cc9eb702">
 </details>
 
+# 获取 ID
+
+<details><summary>Chrome</summary>
+  进入 <code>chrome://extensions/</code><br>
+  <img src="https://github.com/Kenshin/simpread/assets/81074/6e5c4cc5-3aa7-4eb8-a26c-ce8695dbb5bc"/>
+</details>
+
+<details><summary>Edge</summary>
+  进入 <code>edge://extensions/</code><br>
+  <img src="https://github.com/Kenshin/simpread/assets/81074/762bc1cc-64a2-482e-b12e-e7b96437946b"/>
+</details>
+
+注意：每个用户手动安装后的 `ID` 都不一样。
+
 # 如何使用
 
 因为无法独立使用，目前接入了两个简悦插件：
