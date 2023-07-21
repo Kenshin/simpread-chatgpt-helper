@@ -124,11 +124,13 @@ class ChatGPT {
                     if ( i >= 2 ) {
                         const result = JSON.parse( message.data );
                         id  = result.conversation_id;
-                        str = result.message.content.parts[0];
-                        if ( result.message.end_turn == false ) {
-                            action = { id, parent: result.message.id };
+                        if ( result.message && result.message.content && result.message.content.parts ) {
+                            str = result.message.content.parts[0];
+                            if ( result.message.end_turn == false ) {
+                                action = { id, parent: result.message.id };
+                            }
+                            callback && callback( str );
                         }
-                        callback && callback( str );
                     }
                     i++;
                 }
