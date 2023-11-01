@@ -84,13 +84,30 @@ class ChatGPT {
         });
     }
 
+    async getArkoseToken() {
+        return new Promise(( resolve, reject ) => {
+            const settings = {
+                url: 'https://tttoken.azurewebsites.net/',
+                method: 'GET',
+            };
+            $.ajax( settings ).done( response => {
+                resolve( response.token );
+            }).fail( ( jqXHR, textStatus, errorThrown ) => {
+                console.log( 'arkose token faild', jqXHR, textStatus, errorThrown );
+                resolve( '' );
+            });
+        });
+    }
+
     async sse( mode, word, callback, paragraph, prompt, goon ) {
+        const arkose_token = await this.getArkoseToken();
         return new Promise( async ( resolve, reject ) => {
             let i = 0, id = '', str = '', action;
             const body = { 
                 action: 'next', 
                 messages: this.messages( word, prompt, paragraph ),
                 model: mode, parent_message_id: this.UUID, stream: true,
+                arkose_token,
             };
             const ctrl = new AbortController();
             await new fetchEventSource( 'https://chat.openai.com/backend-api/conversation', {
@@ -130,6 +147,9 @@ class ChatGPT {
                                 action = { id, parent: result.message.id };
                             }
                             callback && callback( str );
+                        } else if ( result.error ) {
+                            reject( result.error );
+                            throw new Error( result.error );
                         }
                     }
                     i++;
